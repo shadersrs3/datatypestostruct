@@ -11,4 +11,5 @@ struct mystruct {
     uint8_t unk_1[0x3a0]; // 0x60
     /* ^--- remove pad if needed */
 };
+
 #pragma pack(pop)
