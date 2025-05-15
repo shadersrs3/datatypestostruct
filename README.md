@@ -1,4 +1,4 @@
-Add fields to a structure on a fixed size setting, 
+Add fields to a structure with offset on a fixed size structure setting, 
 
 example code for msvc based on main.cpp main function
 
