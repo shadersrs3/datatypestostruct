@@ -2,6 +2,7 @@ Add fields to a structure on a fixed size setting,
 
 example code for msvc based on main.cpp
 
+```cpp
 #pragma pack(push, 4)
 
 struct mystruct {
@@ -17,3 +18,4 @@ struct mystruct {
 };
 
 #pragma pack(pop)
+```
