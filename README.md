@@ -1,6 +1,6 @@
 Add fields to a structure on a fixed size setting, 
 
-example code for msvc based on main.cpp
+example code for msvc based on main.cpp main function
 
 ```cpp
 #pragma pack(push, 4)
