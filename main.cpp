@@ -139,16 +139,6 @@ public:
     }
 };
 
-#pragma pack(push, 1)
-struct anonymous {
-    uint8_t a; // 0x0
-    uint32_t b; // 0x1
-    uint8_t unk0[2]; // 0x5
-    uint8_t c; // 0x7
-    uint32_t d; // 0x8
-};
-#pragma pack(pop)
-
 int main(int argc, char *argv[]) {
     StructureCreator creator { "msvc" };
     creator.setPackingSize(4);
