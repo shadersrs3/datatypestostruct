@@ -60,6 +60,40 @@ public:
         printf("\n");
     }
 
+    void printDataType(const DataType *dataType, int currentOffset) {
+        const std::string& type = dataType->type;
+
+        switch (dataType->dataType) {
+        case 0:
+            printVariableDataType(dataType, currentOffset);
+            if (type == "uint8_t") {
+                currentOffset += 1;
+            } else if (type == "uint16_t") {
+                currentOffset += 2;
+            } else if (type == "uint32_t") {
+                currentOffset += 4;
+            } else if (type == "uint64_t") {
+                currentOffset += 8;
+            }
+            break;
+        case 1:
+        {
+            auto *arr = static_cast<const ArrayDataType *>(dataType);
+            printArrayDataType(arr, -1, currentOffset);
+            if (type == "uint8_t") {
+                currentOffset += 1 * arr->size;
+            } else if (type == "uint16_t") {
+                currentOffset += 2 * arr->size;
+            } else if (type == "uint32_t") {
+                currentOffset += 4 * arr->size;
+            } else if (type == "uint64_t") {
+                currentOffset += 8 * arr->size;
+            }
+            break;
+        }
+        }
+    }
+
     void printStruct(const char *structName = "anonymous") {
         int currentOffset = 0;
         int numUnknowns = 0;
@@ -76,37 +110,16 @@ public:
         for (auto it = dataTypes.begin(); it != dataTypes.end(); it++) {
             int offset = it->first;
             if (currentOffset <= offset) {
-                const std::string& type = it->second->type;
+                if (currentOffset == 0 && offset != 0) {
+                    int padsToAdd = it->first - currentOffset;
+                    if (padsToAdd != 0) {
+                        ArrayDataType _array("uint8_t", "unk_", padsToAdd);
+                        printArrayDataType(&_array, numUnknowns++, currentOffset);
+                        currentOffset += it->first - currentOffset;
+                    }
+                }
 
-                switch (it->second->dataType) {
-                case 0:
-                    printVariableDataType(it->second, currentOffset);
-                    if (type == "uint8_t") {
-                        currentOffset += 1;
-                    } else if (type == "uint16_t") {
-                        currentOffset += 2;
-                    } else if (type == "uint32_t") {
-                        currentOffset += 4;
-                    } else if (type == "uint64_t") {
-                        currentOffset += 8;
-                    }
-                    break;
-                case 1:
-                {
-                    auto *arr = static_cast<ArrayDataType *>(it->second);
-                    printArrayDataType(arr, -1, currentOffset);
-                    if (type == "uint8_t") {
-                        currentOffset += 1 * arr->size;
-                    } else if (type == "uint16_t") {
-                        currentOffset += 2 * arr->size;
-                    } else if (type == "uint32_t") {
-                        currentOffset += 4 * arr->size;
-                    } else if (type == "uint64_t") {
-                        currentOffset += 8 * arr->size;
-                    }
-                    break;
-                }
-                }
+                printDataType(it->second, currentOffset);
 
                 if (auto it2 = it + 1; it2 != dataTypes.end()) {
                     if (it2->first >= currentOffset) {
@@ -138,14 +151,3 @@ public:
         assert(currentOffset == size);
     }
 };
-
-int main(int argc, char *argv[]) {
-    StructureCreator creator { "msvc" };
-    creator.setPackingSize(4);
-    creator.setSize(0x400);
-
-    creator.addDataType(0, new DataType("uint8_t", "hello", 0));
-    creator.addDataType(0x10, new ArrayDataType("uint32_t", "gello", 20));
-    creator.printStruct("mystruct");
-    return 0;
-}
