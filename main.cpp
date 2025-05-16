@@ -60,7 +60,7 @@ public:
         printf("\n");
     }
 
-    void printDataType(const DataType *dataType, int currentOffset) {
+    void printDataType(const DataType *dataType, int& currentOffset) {
         const std::string& type = dataType->type;
 
         switch (dataType->dataType) {
@@ -148,6 +148,7 @@ public:
         printf("};\n");
         if (compiler == "msvc")
             printf("#pragma pack(pop)\n");
+        printf("FINAL SIZE 0x%x", currentOffset);
         assert(currentOffset == size);
     }
 };
